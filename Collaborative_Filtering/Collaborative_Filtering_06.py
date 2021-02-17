@@ -23,15 +23,15 @@ for i in ratings:
     for j in ratings[i]:
         count += 1
         rat += ratings[i][j]
-    means[i] = rat / count  
+    means[i] = rat / count
 
 
 def sim_user(user1,user2):
        
     rating1 = []
-    rating2 = [] #두 유저의 평점을 저장할 리스트
+    rating2 = []
     
-    #두 사람이 모두 본 영화만 리스트로 저장
+    #두 사람이 본 영화만 리스트로 저장
     for movie_id in ratings[user1]:
         if movie_id in ratings[user2]:
             rating1.append(ratings[user1][movie_id])
@@ -44,24 +44,19 @@ def sim_user(user1,user2):
         rating1[x] = rating1[x] - means[user1]
         rating2[x] = rating2[x] - means[user2] #각 평점에서 평점의 평균을 빼준다.
 
-    vec = ((np.linalg.norm(rating1))*(np.linalg.norm(rating2))) #두 평점의 크기를 미리 곱한다.
+    vec = ((np.linalg.norm(rating1))*(np.linalg.norm(rating2)))
 
-    if vec != 0.0: #분모가 0이 아니라면
+    if vec != 0.0:
         sim = np.dot(rating1,rating2)/(vec)#코사인 유사도 계산
     
-        return round(sim,4)#소수점 아래 4자리까지 계산후 리턴
+        return round(sim,4)#소수점 아래 4자리
 
     else:
-        return 0.0#분모가 0이면 계산할 수 없다. 0.0리턴
+        return 0.0
 
-print(sim_user(1,2))
-print(sim_user(1,3))
-print(sim_user(1,4))
 
 def calculate_similarity():
-    
-    # 1 ~ 943(N_user)
-    print(N_user+1)
+    print('N_user+1 = ', N_user+1)
     for i in range(1, N_user+1):
         if(i % 50 == 0):
             print('i = ', i)
@@ -70,21 +65,18 @@ def calculate_similarity():
             if i != j:
                 nei.append((j, sim_user(i, j)))
                    
-        # 네이버 유저의 similarity 기준 내림차순으로 정렬            
+        # 내림차순으로 정렬            
         nei.sort(key=lambda x: x[1], reverse=True)
         neighbors[i] = nei
-        # neighbors = { user_id : [sorted (user_id, similarity)] }
 
 calculate_similarity()   # 모든 유저간 유사도 계산해서 저장
-# print(len(neighbors[2])) # 유저2의 다른 942명 유저와의 유사도
-# print(neighbors[2])
+
 
 def predict_rating(user_id, movie_id):
     rating = 0
     K = 0
     j = 0
     for i in range(N_user - 1):
-        # valid neighbor 40개까지
         if j > 5:
             break
         # 해당 영화 평점을 실제로 매긴 neighbor 유저만 취급
@@ -92,12 +84,12 @@ def predict_rating(user_id, movie_id):
             j += 1
             nei_id = neighbors[user_id][i][0]
             nei_sim = neighbors[user_id][i][1]
-                                                 ### mean으로 보정
+
             rating += (ratings[nei_id][movie_id] - means[nei_id]) * nei_sim
             K += nei_sim
     
     if K != 0:
-        rating = means[user_id] + (rating / K)  ###
+        rating = means[user_id] + (rating / K)
     else:
         rating = 2.3
         
@@ -110,11 +102,11 @@ def prediction():
     test = np.array(test)
     
     sqaure = 0
-    #  RMSE (Root Mean Square Error) 
     for user_id, movie_id, rating in test:
-        # sum of (아이템의 예측 레이팅 - 아이템의 원래 레이팅) ** 2
         sqaure += (predict_rating(user_id, movie_id) - rating) ** 2
+
     return np.sqrt(sqaure / len(test))
+
 
 rmse = prediction()
 print(rmse)
