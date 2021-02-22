@@ -41,13 +41,6 @@ for x in range(2,6):
         ratings_test[int(np_test[i][0])-1][int(np_test[i][1])-1] = np_test[i][2]
 
     user_distances = cosine_similarity(ratings_train)
-    top = user_distances.dot(ratings_train)
-    for i in range(n_users):
-        sum = 0
-        for j in range(n_items):
-            sum += top[i][j]
-        if(sum == 0):
-            print('zzz', i)
 
     # for i in range(np.array([np.abs(user_distances).sum(axis=1)]).T.shape[0]):
     #     if(np.array([np.abs(user_distances).sum(axis=1)]).T[i][0] == 0):

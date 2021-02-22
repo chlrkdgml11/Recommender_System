@@ -9,7 +9,7 @@ array_01 = [[0 for col in range(2)] for row in range(25)]
 array_02 = [[0 for col in range(2)] for row in range(25)]
 
 
-for x in range(2,21):
+for x in range(2,6):
     df = pd.read_csv("./Data/u.data", sep='\t', header=None)
     df.columns = ["user_id", "item_id", "rating", 'timestamp']
     del df["timestamp"]
@@ -20,9 +20,6 @@ for x in range(2,21):
 
 
     df_train, df_test = train_test_split(df, test_size=0.33, random_state=42)
-
-    print(df_train.user_id.unique().shape[0])
-    print(df_test.user_id.unique().shape[0])
 
     np_train = np.array(df_train)
     np_test = np.array(df_test)
