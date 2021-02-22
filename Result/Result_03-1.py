@@ -4,25 +4,28 @@ import numpy as np
 N_user = 943
 N_movie = 1682
 
-data = pd.read_csv("../Data/u1.base", sep="\t", names=['userId', 'movieId', 'rating', 'timestamp'])
-del data['timestamp']
-data = np.array(data)
-
-# ratings = { user_id : { movie_id: rating } }
-ratings = {i:{} for i in range(1,N_user+1)}
-for a,b,c in data:
-    ratings[a][b] = c
+df_train = pd.read_csv('../Data/u1.base', sep='\t', header=None)
+df_train.columns = ["user_id", "item_id", "rating", "timestamp"]
+del df_train["timestamp"]
+n_users = df_train.user_id.max()
+n_movies = 1682
+ratings_train = np.zeros((n_users, n_movies))
+df_train = np.array(df_train)
+for i in range(df_train.shape[0]):
+    ratings_train[df_train[i][0]-1][df_train[i][1]-1] = df_train[i][2]
 
 # neighbors = { user_id : [sorted (user_id, similarity)] }
 neighbors = {}
 # means = { user_id : mean of user's ratings}
-means = {}
-for i in ratings:
+means = [[0 for col in range(2)] for row in range(943)]
+for i in range(len(ratings_train)):
     rat = 0
     count = 0
-    for j in ratings[i]:
+    for j in range(len(ratings_train[0])):
+        if(ratings_train[i][j] == 0):
+            continue
         count += 1
-        rat += ratings[i][j]
+        rat += ratings_train[i][j]
     means[i] = rat / count    
 
 
@@ -32,17 +35,17 @@ def sim_user(user1,user2):
     rating2 = []
     
     # 두 사람이 본 영화만 리스트로 저장
-    for movie_id in ratings[user1]:
-        if movie_id in ratings[user2]:
-            rating1.append(ratings[user1][movie_id])
-            rating2.append(ratings[user2][movie_id])
-      
+    for movie_id in ratings_train[user1-1]:
+        if movie_id in ratings_train[user2-1]:
+            rating1.append(ratings_train[user1-1][movie_id])
+            rating2.append(ratings_train[user2-1][movie_id])
+    
     if len(rating1) == 0:
         return 0.0
     
     for x in range(len(rating1)):
-        rating1[x] = rating1[x] - means[user1]
-        rating2[x] = rating2[x] - means[user2] #각 평점에서 평점의 평균을 빼준다.
+        rating1[x] = rating1[x] - means[user1-1]
+        rating2[x] = rating2[x] - means[user2-1] #각 평점에서 평점의 평균을 빼준다.
 
     vec = ((np.linalg.norm(rating1))*(np.linalg.norm(rating2)))
 
@@ -53,8 +56,11 @@ def sim_user(user1,user2):
 
     else:
         return 0.0
-
-
+        
+print(sim_user(1,2))
+print(sim_user(1,3))
+print(sim_user(1,4))
+'''
 def calculate_similarity():
     print('N_user+1 = ', N_user+1)
     for i in range(1, N_user+1):
@@ -110,3 +116,4 @@ def prediction():
 
 rmse = prediction()
 print(rmse)
+'''
