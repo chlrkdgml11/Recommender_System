@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-array = [[0 for col in range(2)] for row in range(35)]
+array = [[0 for col in range(2)] for row in range(25)]
 
-for x in range(2,31):
+for x in range(2,21):
     print('x = ', x)
     df = pd.read_csv("./Data/u.data", sep='\t', header=None)
     df.columns = ["user_id", "item_id", "rating", 'timestamp']
@@ -12,10 +12,10 @@ for x in range(2,31):
 
 
     n_users = df.user_id.max()
-    n_items = 600
+    n_items = 445
 
 
-    df_train, df_test = train_test_split(df, test_size=0.33, random_state=42)
+    df_train, df_test = train_test_split(df, test_size=0.2, random_state=42)
 
 
     np_train = np.array(df_train)

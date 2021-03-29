@@ -10,16 +10,17 @@ array_02 = [[0 for col in range(2)] for row in range(25)]
 
 
 for x in range(2,21):
+    print('x = ', x)
     df = pd.read_csv("./Data/u.data", sep='\t', header=None)
     df.columns = ["user_id", "item_id", "rating", 'timestamp']
     del df["timestamp"]
 
 
     n_users = df.user_id.max()
-    n_items = df.item_id.max()
+    n_items = 155
 
 
-    df_train, df_test = train_test_split(df, test_size=0.33, random_state=42)
+    df_train, df_test = train_test_split(df, test_size=0.2, random_state=42)
 
 
     np_train = np.array(df_train)
@@ -28,11 +29,15 @@ for x in range(2,21):
 
     ratings_train = np.zeros((n_users, n_items))
     for i in range(np_train.shape[0]):
+        if(np_train[i][1] > n_items):
+            continue
         ratings_train[np_train[i][0]-1][np_train[i][1]-1] = np_train[i][2]
 
 
     ratings_test = np.zeros((n_users, n_items))
     for i in range(np_test.shape[0]):
+        if(np_test[i][1] > n_items):
+            continue
         ratings_test[np_test[i][0]-1][np_test[i][1]-1] = np_test[i][2]
 
 
@@ -89,8 +94,6 @@ for x in range(2,21):
             print("cnt = ", i)
         user_pred_k[i, :] = top_k_distances[i].T.dot(ratings_train[top_k_users][i]) / np.array([np.abs(top_k_distances[i].T).sum(axis=0)]).T
 
-
-    # print(np.sqrt(mean_squared_error(user_pred_k, ratings_test)))
 
     sum = 0
     cnt = 0

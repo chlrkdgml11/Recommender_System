@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+import pickle
 
-array = [[0 for col in range(2)] for row in range(35)]
+array = [[0 for col in range(2)] for row in range(25)]
 
-for x in range(2,31):
+for x in range(2,21):
     print('x = ', x)
     df = pd.read_csv("./Data/u.data", sep='\t', header=None)
     df.columns = ["user_id", "item_id", "rating", 'timestamp']
@@ -12,10 +13,10 @@ for x in range(2,31):
 
 
     n_users = df.user_id.max()
-    n_items = 600
+    n_items = 445
 
 
-    df_train, df_test = train_test_split(df, test_size=0.33, random_state=42)
+    df_train, df_test = train_test_split(df, test_size=0.2, random_state=42)
 
 
     np_train = np.array(df_train)
@@ -48,7 +49,6 @@ for x in range(2,31):
         means[i] = rat / count
 
   
-
     def sim_user(user1,user2):
         
         rating1 = []
@@ -79,6 +79,7 @@ for x in range(2,31):
         else:
             return 0.0#분모가 0이면 계산할 수 없다. 0.0리턴
 
+
     def calculate_similarity():
         
         # 1 ~ 943(N_user)
@@ -94,7 +95,17 @@ for x in range(2,31):
             neighbors[i] = nei
             # neighbors = { user_id : [sorted (user_id, similarity)] }
 
-    calculate_similarity()   # 모든 유저간 유사도 계산해서 저장
+
+    if(x == 2):
+        calculate_similarity()   # 모든 유저간 유사도 계산해서 저장
+        with open('neighbors.pickle','wb') as fw:
+            pickle.dump(neighbors, fw)
+
+    else:
+        with open('neighbors.pickle', 'rb') as fr:
+            user_loaded = pickle.load(fr)
+        neighbors = user_loaded
+
 
     def predict_rating(user_id, movie_id):
         rating = 0
@@ -120,6 +131,7 @@ for x in range(2,31):
             
         return rating
 
+
     def prediction():
         sum = 0
         cnt = 0
@@ -133,10 +145,9 @@ for x in range(2,31):
         return np.sqrt(sum / cnt)
 
 
-
-
     array[x][0] = x
     array[x][1] = prediction()
+    print(array)
 
 print('Result_04-2')
 print(array)
