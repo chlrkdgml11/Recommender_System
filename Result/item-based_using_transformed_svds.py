@@ -10,8 +10,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse.linalg import svds
 
 
-array_01 = [[0 for col in range(15)] for row in range(31)]
-array_02 = [[0 for col in range(15)] for row in range(31)]
+array_01 = [[0 for col in range(2)] for row in range(51)]
+array_02 = [[0 for col in range(2)] for row in range(51)]
 
 
 df = pd.read_csv("./Data/ratings_small.csv", sep=',', header=None)
@@ -42,34 +42,28 @@ ratings_test = np.zeros((n_users, n_items))
 for i in range(np_test.shape[0]):
     ratings_test[int(np_test[i][0])-1][int(np_test[i][1])-1] = np_test[i][2]
 
-
 ratings_train = ratings_train.T
 ratings_test = ratings_test.T
+
+user_ratings_mean = np.mean(ratings_train, axis = 1)
+
+ratings_train = ratings_train - user_ratings_mean.reshape(-1,1)
+
 rmse = 100
-for x in range(5,51):
+for x in range(2,51):
     print('x = ', x)
-    k=x
-    neigh = NearestNeighbors(n_neighbors=k, metric="cosine")
-    neigh.fit(ratings_train)
+    U, sigma, Vt = svds(ratings_train, k = x)
 
+    sigma = np.diag(sigma)
 
-    top_k_distances, top_k_users = neigh.kneighbors(ratings_train, return_distance=True)
-    user_pred_k = np.zeros(ratings_train.shape)
-
-
-    for i in range(ratings_train.shape[0]):
-        bottom = np.array([np.abs(top_k_distances[i].T).sum(axis=0)]).T
-        if(bottom[0] == 0):
-            bottom[0] = 1
-        user_pred_k[i, :] = top_k_distances[i].T.dot(ratings_train[top_k_users][i]) / bottom
-
+    pred_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1, 1)
 
     sum = 0
     cnt = 0
     for i in range(n_items):
         for j in range(n_users):
-            if(user_pred_k[i][j] != 0 and ratings_test[i][j] != 0):
-                sum += (user_pred_k[i][j] - ratings_test[i][j]) ** 2
+            if(pred_ratings[i][j] != 0 and ratings_test[i][j] != 0):
+                sum += (pred_ratings[i][j] - ratings_test[i][j]) ** 2
                 cnt += 1
 
     if(rmse > np.sqrt(sum/cnt)):

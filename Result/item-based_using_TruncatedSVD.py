@@ -21,7 +21,7 @@ del df["timestamp"]
 
 
 n_users = df.user_id.max()
-n_items = 155
+n_items = 445
 
 modified_df = df.loc[(df['user_id']  <= n_users) & (df['item_id']  <= n_items)]
 print(modified_df.shape)
@@ -48,7 +48,6 @@ ratings_test = ratings_test.T
 
 user_ratings_mean = np.mean(ratings_train, axis = 1)
 
-# ratings_train = ratings_train - user_ratings_mean.reshape(-1,1)
 rmse = 100
 for x in range(2,51):
     print('x = ', x)
@@ -60,8 +59,6 @@ for x in range(2,51):
         S = svd.singular_values_
 
         pred_ratings = np.dot(US, V)
-
-        # pred_ratings = pred_ratings + user_ratings_mean.reshape(-1,1)
 
         sum = 0
         cnt = 0

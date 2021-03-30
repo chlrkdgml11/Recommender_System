@@ -20,7 +20,7 @@ del df["timestamp"]
 
 
 n_users = df.user_id.max()
-n_items = 155
+n_items = 445
 
 modified_df = df.loc[(df['user_id']  <= n_users) & (df['item_id']  <= n_items)]
 print(modified_df.shape)
@@ -43,7 +43,7 @@ for i in range(np_test.shape[0]):
     ratings_test[int(np_test[i][0])-1][int(np_test[i][1])-1] = np_test[i][2]
 
 rmse = 100
-for x in range(2,51):
+for x in range(5,51):
     print('x = ', x)
     k=x
     neigh = NearestNeighbors(n_neighbors=k, metric="cosine")
