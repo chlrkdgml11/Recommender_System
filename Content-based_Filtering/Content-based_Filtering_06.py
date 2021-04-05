@@ -7,8 +7,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-data = pd.read_csv('./tmdb_5000_movies.csv')
+data = pd.read_csv('./Data/tmdb_5000_movies.csv')
 data = data[['id','genres', 'vote_average', 'vote_count','title',  'keywords']]
+
+# print(data)
 
 # 여기서부터의 과정은 rating 불공정을 처리하기 위한 과정
 # 투표수의 상위 89%는 약 1683
@@ -52,24 +54,40 @@ data.to_csv('./pre_tmdb_5000_movies.csv', index = False)
 count_vector = CountVectorizer(ngram_range=(1, 3))
 c_vector_genres = count_vector.fit_transform(data['genres'])
 
+# print(c_vector_genres)
+
 
 #코사인 유사도를 구한 벡터를 미리 저장
 cosine_similarity = cosine_similarity(c_vector_genres, c_vector_genres).argsort()[:, ::-1]
-print('cosine_similarity(c_vector_genres, c_vector_genres)\n', cosine_similarity(c_vector_genres, c_vector_genres))
-print('cosine_similarity\n', cosine_similarity)
+# print(cosine_similarity)
+# print('cosine_similarity(c_vector_genres, c_vector_genres)\n', cosine_similarity(c_vector_genres, c_vector_genres))
+# print('cosine_similarity\n', cosine_similarity)
 
 
 def get_recommend_movie_list(df, movie_title, top=30):
     # 특정 영화와 비슷한 영화를 추천해야 하기 때문에 '특정 영화' 정보를 뽑아낸다.
     target_movie_index = df[df['title'] == movie_title].index.values
+    print(target_movie_index)
+    # print('target_movie_index\n', df[df['title'] == movie_title].index.values)
     
     #코사인 유사도 중 비슷한 코사인 유사도를 가진 정보를 뽑아낸다.
     sim_index = cosine_similarity[target_movie_index, :top].reshape(-1)
     #본인을 제외
     sim_index = sim_index[sim_index != target_movie_index]
+    # print(sim_index)
 
     #data frame으로 만들고 vote_count으로 정렬한 뒤 return
     result = df.iloc[sim_index].sort_values('score', ascending=False)[:10]
+    # print(result)
     return result
 
-print('result\n', get_recommend_movie_list(data, movie_title='The Dark Knight Rises'))
+result = get_recommend_movie_list(data, movie_title='The Dark Knight Rises')
+# print(result)
+
+# print("result.iloc[0]['genres']\n", result.iloc[0])
+
+# print("result.iloc[1]['genres']\n", result.iloc[1])
+
+genres_array = result.iloc[0]['genres'].split(' ')
+
+print(genres_array)

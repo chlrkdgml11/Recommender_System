@@ -3,7 +3,10 @@ from surprise import Dataset
 
 data = Dataset.load_builtin('ml-100k', prompt=False)
 
+print(data)
+
 raw_data = np.array(data.raw_ratings, dtype = int)
+
 
 raw_data[:, 0] -= 1
 raw_data[:, 1] -= 1
