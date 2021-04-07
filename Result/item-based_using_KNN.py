@@ -20,6 +20,7 @@ del df["timestamp"]
 
 
 n_users = df.user_id.max()
+print(n_users)
 n_items = 445
 
 modified_df = df.loc[(df['user_id']  <= n_users) & (df['item_id']  <= n_items)]

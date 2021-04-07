@@ -2,11 +2,16 @@
 
 /Test/
 
-/Content_text/
+/Content_All_Image/
 
-/Image/
+/Content_All_Text/
 
-/Text/
+/Content_Selected_Text/
 
-/Variance_Image/
+/Content_Selected_Image/
 
+/Find_Image/
+
+/FInd_Text/
+
+/Find_Variance_Image/

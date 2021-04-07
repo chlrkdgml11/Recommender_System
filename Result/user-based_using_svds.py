@@ -8,6 +8,7 @@ import pickle
 from numpy.linalg import svd
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse.linalg import svds
+import matplotlib.pyplot as plt
 
 
 array_01 = [[0 for col in range(2)] for row in range(51)]
@@ -23,10 +24,7 @@ n_users = df.user_id.max()
 n_items = 445
 
 modified_df = df.loc[(df['user_id']  <= n_users) & (df['item_id']  <= n_items)]
-print(modified_df.shape)
 df_train, df_test = train_test_split(modified_df, test_size=0.2, random_state=42)
-print(df_train.shape)
-print(df_test.shape)
 
 
 np_train = np.array(df_train)
@@ -42,12 +40,16 @@ ratings_test = np.zeros((n_users, n_items))
 for i in range(np_test.shape[0]):
     ratings_test[int(np_test[i][0])-1][int(np_test[i][1])-1] = np_test[i][2]
 
-user_ratings_mean = np.mean(ratings_train, axis = 1)
 
 rmse = 100
-for x in range(2,51):
-    print('x = ', x)
+for x in range(1, 444):
+    if(x % 50 == 0):
+        print('x = ', x)
     U, sigma, Vt = svds(ratings_train, k = x)
+
+    # print(U.shape)
+    # print(sigma.shape)
+    # print(Vt.shape)
 
     sigma = np.diag(sigma)
 
@@ -66,4 +68,11 @@ for x in range(2,51):
         print(x)
         print(np.sqrt(sum/cnt))
 
+    plt.plot(x, np.sqrt(sum/cnt), 'ro')
+
+plt.savefig('svds.png')
+
+
+plt.close()
+    
 

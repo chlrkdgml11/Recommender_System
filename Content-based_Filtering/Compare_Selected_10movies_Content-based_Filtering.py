@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 from ast import literal_eval
+import matplotlib.pyplot as plt
 
 
 df_movie = pd.read_csv("./Data/content_movies.csv", sep=',', header=0)
@@ -39,7 +40,6 @@ for i in range(1,611):
         print('i = ', i)
     if(modified_df[modified_df["userId"] == i].shape[0] < 10):
         lack_user.append(i)
-print(lack_user)
 
 
 
@@ -47,7 +47,7 @@ print(lack_user)
 
 
 
-for i in range(1, 611):
+for i in range(400, 611):
     genres_list  = np.array(['Mystery', 'Thriller', 'Crime', 'Adventure', 'Comedy', 'Romance', 'Action', 'Drama', 'War', 'Sci-Fi', 'Children', 'Western', 'Animation', 'Fantasy', 'Musical', 'Film-Noir', 'Horror', 'Documentary', 'IMAX', '(no genres listed)'])
     genres_count_list = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
@@ -58,24 +58,36 @@ for i in range(1, 611):
     if(i % 50 == 0):
         print('i = ', i)
 
-    np_selected_movies = np.array(modified_df[modified_df["userId"] == i].movieId)
+    np_selected_movies = np.array(modified_df[modified_df["userId"] == i].sample(n = 10).movieId)
 
     for j in range(len(np_selected_movies)):
         if(j >= 10):
             break
         if(np_selected_movies[j] == 2851 or np_selected_movies[j] == 838 or np_selected_movies[j] == 34048):
             continue
+
         result = get_recommend_movie_list(df_movie, movie_title=df_movie[df_movie["movieId"] == np_selected_movies[j]].title.values[0])
 
-        # print(result.genres.values[0].split('|'))
+        for w in range(10):
+            for k in result.genres.values[w].split('|'):
+                for l in range(20):
+                    if(genres_list[l] == k):
+                        genres_count_list[l] += 1
 
-        for k in result.genres.values[0].split('|'):
-            for l in range(20):
-                if(genres_list[l] == k):
-                    genres_count_list[l] += 1
 
     ab = np.zeros(genres_list.size, dtype=[('var1', 'U6'), ('var2', float)])
     ab['var1'] = genres_list
     ab['var2'] = genres_count_list
 
-    np.savetxt('./Content_text/%d.txt' %(i), ab, fmt="%7s %10d")
+    plt.figure(figsize=(25,10))
+    for o in range(19):
+        plt.bar(genres_list[o], genres_count_list[o], label='%d_user' %(i))
+
+
+    plt.title('Recommend Movies')
+    plt.xlabel('Genres')
+    plt.ylabel('Numbers')
+    plt.grid()
+    plt.savefig('./Content_Selected_Image/%d' %(i))
+
+    np.savetxt('./Content_Selected_Text/%d.txt' %(i), ab, fmt="%7s %d")

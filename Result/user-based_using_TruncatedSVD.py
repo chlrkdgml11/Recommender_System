@@ -9,6 +9,7 @@ from numpy.linalg import svd
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse.linalg import svds
 from sklearn.decomposition import TruncatedSVD
+import matplotlib.pyplot as plt
 
 
 array_01 = [[0 for col in range(2)] for row in range(51)]
@@ -46,8 +47,9 @@ for i in range(np_test.shape[0]):
 user_ratings_mean = np.mean(ratings_train, axis = 1)
 
 rmse = 100
-for x in range(2,51):
-    print('x = ', x)
+for x in range(1,444):
+    if(x % 50 == 0):
+        print('x = ', x)
     for y in range(2,51):
         svd = TruncatedSVD(n_components = x, n_iter = y, random_state = 42)
         
@@ -70,3 +72,10 @@ for x in range(2,51):
             print(x)
             print(y)
             print(np.sqrt(sum/cnt))
+
+    plt.plot(x, np.sqrt(sum/cnt), 'ro')
+
+plt.savefig('svds.png')
+
+
+plt.close()
