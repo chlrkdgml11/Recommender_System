@@ -19,7 +19,7 @@ df = pd.read_csv("./Data/ratings_small.csv", sep=',', header=None)
 df.columns = ["user_id", "item_id", "rating", 'timestamp']
 del df["timestamp"]
 
-for u in range(100, 901, 100):
+for u in range(100, 901, 50):
     print('u = ', u)
     n_users = u
     n_items = 445
@@ -88,35 +88,15 @@ for u in range(100, 901, 100):
 
 
 
-    svd = TruncatedSVD(n_components = 10, n_iter = 5, random_state = 42)
-
-    US = svd.fit_transform(ratings_train)
-    V = svd.components_
-    S = svd.singular_values_
-
-    pred_ratings = np.dot(US, V)
-
-    sum = 0
-    cnt = 0
-    for i in range(n_users):
-        for j in range(n_items):
-            if(pred_ratings[i][j] != 0 and ratings_test[i][j] != 0):
-                sum += (pred_ratings[i][j] - ratings_test[i][j]) ** 2
-                cnt += 1
-
-    TruncatedSVD_rmse = np.sqrt(sum / cnt)
-
     if(u == 100):
-        plt.bar(u-20, knn_rmse, width=15, color='r', label='KNN')
-        plt.bar(u, svds_rmse, width=15, color='g', label='svds')
-        plt.bar(u+20, TruncatedSVD_rmse, width=15, color='y', label='TruncatedSVD')
+        plt.plot(u, knn_rmse, 'ro', label='KNN')
+        plt.plot(u, svds_rmse, 'bo', label='svds')
     else:
-        plt.bar(u-20, knn_rmse, width=15, color='r')
-        plt.bar(u, svds_rmse, width=15, color='g')
-        plt.bar(u+20, TruncatedSVD_rmse, width=15, color='y')
+        plt.plot(u, knn_rmse, 'ro')
+        plt.plot(u, svds_rmse, 'bo')
 
 plt.legend()
-plt.title('Conpare Algorithm')
+plt.title('Compare Algorithm')
 plt.xlabel('Number of Users')
 plt.ylabel('RMSE')
 plt.grid()

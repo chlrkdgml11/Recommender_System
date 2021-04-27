@@ -50,12 +50,18 @@ rmse = 100
 for x in range(1,444):
     if(x % 50 == 0):
         print('x = ', x)
-    for y in range(2,51):
+    for y in range(5,6):
         svd = TruncatedSVD(n_components = x, n_iter = y, random_state = 42)
         
         US = svd.fit_transform(ratings_train)
         V = svd.components_
         S = svd.singular_values_
+
+        print(US.shape)
+        print(V.shape)
+        print(S.shape)
+
+        print()
 
         pred_ratings = np.dot(US, V)
 
