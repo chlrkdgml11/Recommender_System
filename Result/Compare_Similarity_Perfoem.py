@@ -64,9 +64,8 @@ for u in range(100, 951, 50):
     cnt = 0
     for i in range(n_users):
         for j in range(n_items):
-            if(user_pred_k[i][j] != 0 and ratings_test[i][j] != 0):
-                sum += (user_pred_k[i][j] - ratings_test[i][j]) ** 2
-                cnt += 1
+            sum += (user_pred_k[i][j] - ratings_test[i][j]) ** 2
+            cnt += 1
 
     cosine_rmse = np.sqrt(sum / cnt)
 
@@ -91,9 +90,8 @@ for u in range(100, 951, 50):
     cnt = 0
     for i in range(n_users):
         for j in range(n_items):
-            if(user_pred_k[i][j] != 0 and ratings_test[i][j] != 0):
-                sum += (user_pred_k[i][j] - ratings_test[i][j]) ** 2
-                cnt += 1
+            sum += (user_pred_k[i][j] - ratings_test[i][j]) ** 2
+            cnt += 1
 
     euclidean_rmse = np.sqrt(sum / cnt)
 
@@ -119,9 +117,8 @@ for u in range(100, 951, 50):
     cnt = 0
     for i in range(n_users):
         for j in range(n_items):
-            if(user_pred_k[i][j] != 0 and ratings_test[i][j] != 0):
-                sum += (user_pred_k[i][j] - ratings_test[i][j]) ** 2
-                cnt += 1
+            sum += (user_pred_k[i][j] - ratings_test[i][j]) ** 2
+            cnt += 1
 
     correlation_rmse = np.sqrt(sum / cnt)
 
@@ -147,9 +144,8 @@ for u in range(100, 951, 50):
     cnt = 0
     for i in range(n_users):
         for j in range(n_items):
-            if(user_pred_k[i][j] != 0 and ratings_test[i][j] != 0):
-                sum += (user_pred_k[i][j] - ratings_test[i][j]) ** 2
-                cnt += 1
+            sum += (user_pred_k[i][j] - ratings_test[i][j]) ** 2
+            cnt += 1
 
     jaccard_rmse = np.sqrt(sum / cnt)
 
